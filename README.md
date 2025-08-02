@@ -13,6 +13,7 @@ SkillSync is a modern, AI-powered knowledge-sharing platform designed to help te
 ### Core Functionality
 - **Knowledge Sharing**: Share SOPs, best practices, and experiences with categorization and tagging
 - **Query-Based Support**: Ask questions and get answers from team members
+- **Prompt AI for Answers**: Ask the built-in AI and get instant answers based on previously uploaded videos, SOPs, and documentation
 - **Smart Search**: NLP-powered search functionality for finding relevant knowledge
 - **Community Collaboration**: Project-based communities for team collaboration
 - **Responsive Design**: Modern, mobile-friendly interface
