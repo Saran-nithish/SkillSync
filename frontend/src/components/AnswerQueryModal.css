@@ -1,0 +1,39 @@
+.answer-form {
+  padding: 32px;
+}
+
+.question-preview {
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.question-preview h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 8px 0;
+}
+
+.question-preview p {
+  color: #1f2937;
+  line-height: 1.5;
+  margin: 0 0 12px 0;
+}
+
+.question-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.question-meta span {
+  background-color: #e5e7eb;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Inherit other styles from CreateKnowledgeModal.css */ 

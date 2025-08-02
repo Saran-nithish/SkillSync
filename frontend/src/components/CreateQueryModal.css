@@ -1,0 +1,22 @@
+.modal-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.title-icon {
+  color: #3b82f6;
+}
+
+.query-form {
+  padding: 32px;
+}
+
+.form-hint {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Inherit other styles from CreateKnowledgeModal.css */ 
