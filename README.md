@@ -15,12 +15,22 @@ A comprehensive team knowledge sharing and collaboration platform with AI-powere
 
 ## 🚀 Features
 
+<<<<<<< HEAD
 ### 📚 Knowledge Management
 - **Smart Knowledge Base**: Create, organize, and share articles, SOPs, and best practices
 - **Multi-step Knowledge Creation**: Guided wizard for creating comprehensive knowledge articles
 - **File Upload Support**: Upload SOPs, documents, images, and videos (up to 50MB)
 - **Advanced Tagging**: Organize content with intelligent tagging system
 - **Category Management**: Structured categorization for easy discovery
+=======
+### Core Functionality
+- **Knowledge Sharing**: Share SOPs, best practices, and experiences with categorization and tagging
+- **Query-Based Support**: Ask questions and get answers from team members
+- **Prompt AI for Answers**: Ask the built-in AI and get instant answers based on previously uploaded videos, SOPs, and documentation
+- **Smart Search**: NLP-powered search functionality for finding relevant knowledge
+- **Community Collaboration**: Project-based communities for team collaboration
+- **Responsive Design**: Modern, mobile-friendly interface
+>>>>>>> 0c1d71ab8bda599033b991c2e4bb73f17ab9ae3a
 
 ### 🤖 AI-Powered Features
 - **Ask AI**: Intelligent Q&A system powered by OpenAI GPT
