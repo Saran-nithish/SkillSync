@@ -1,7 +1,7 @@
 .knowledge-card {
-  background: white;
+  background: var(--bg-primary);
   border-radius: 12px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border-primary);
   overflow: hidden;
   transition: all 0.2s ease;
   position: relative;
@@ -9,7 +9,8 @@
 
 .knowledge-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--border-secondary);
 }
 
 .card-header {
@@ -43,16 +44,16 @@
 }
 
 .card-title {
-  font-size: 16px;
+  font-size: var(--font-lg);
   font-weight: 600;
-  color: #1f2937;
+  color: var(--text-primary);
   margin: 0 0 8px 0;
   line-height: 1.4;
 }
 
 .card-description {
-  font-size: 14px;
-  color: #6b7280;
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
   line-height: 1.5;
   margin: 0 0 12px 0;
 }
@@ -65,8 +66,8 @@
 }
 
 .card-tags .tag {
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
   padding: 3px 8px;
   border-radius: 8px;
   font-size: 11px;
@@ -148,3 +149,18 @@
     justify-content: space-between;
   }
 } 
+
+/* Minimalist Pro overrides */
+.knowledge-card,
+.knowledge-item,
+.card-knowledge {
+  background: var(--bg-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.knowledge-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+
+.knowledge-card .card-title { color: var(--text-primary); font-weight: 600; }
+.knowledge-card .card-description { color: var(--text-secondary); } 

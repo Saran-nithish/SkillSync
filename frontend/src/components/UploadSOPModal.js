@@ -1,54 +1,51 @@
 import React, { useState } from 'react';
-import {
-  X, BookOpen, Upload, FileText, Trash2, Plus, Tag, User,
-  FolderOpen, Lightbulb, Award, Zap, Hash, AlertCircle
+import { 
+  X, Upload, FileText, AlertCircle, CheckCircle, User, 
+  FolderOpen, Hash, Tag, BookOpen, Zap, File, Trash2
 } from 'lucide-react';
-import { fileAPI } from '../services/api';
-import './CreateKnowledgeModal.css';
+import { fileAPI, knowledgeAPI } from '../services/api';
+import './UploadSOPModal.css';
 
-const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [] }) => {
+const UploadSOPModal = ({ onClose, onSubmit, projects = [] }) => {
   const [formData, setFormData] = useState({
     title: '',
-    content: '',
-    category: '',
-    tags: [],
+    description: '',
     author: '',
     project: '',
-    type: 'knowledge'
+    category: '',
+    tags: [],
+    type: 'sop'
   });
   const [tagInput, setTagInput] = useState('');
-  const [attachments, setAttachments] = useState([]);
+  const [uploadedFile, setUploadedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [activeStep, setActiveStep] = useState(1);
   const [errors, setErrors] = useState({});
-
-  const knowledgeTypes = [
-    { value: 'knowledge', label: 'General Knowledge', icon: BookOpen, color: '#3b82f6', desc: 'General information and insights' },
-    { value: 'sop', label: 'Standard Operating Procedure', icon: FileText, color: '#10b981', desc: 'Step-by-step process documentation' },
-    { value: 'best-practice', label: 'Best Practice', icon: Award, color: '#f59e0b', desc: 'Proven methods and recommendations' },
-    { value: 'experience', label: 'Experience Share', icon: Lightbulb, color: '#8b5cf6', desc: 'Personal experiences and learnings' }
-  ];
+  const [activeStep, setActiveStep] = useState(1);
 
   const validateForm = () => {
     const newErrors = {};
-
+    
+    if (!uploadedFile) {
+      newErrors.file = 'SOP document is required';
+    }
+    
     if (!formData.title.trim()) {
       newErrors.title = 'Title is required';
     } else if (formData.title.length < 5) {
       newErrors.title = 'Title must be at least 5 characters';
     }
-
-    if (!formData.content.trim()) {
-      newErrors.content = 'Content is required';
-    } else if (formData.content.length < 20) {
-      newErrors.content = 'Content must be at least 20 characters';
+    
+    if (!formData.description.trim()) {
+      newErrors.description = 'Description is required';
+    } else if (formData.description.length < 20) {
+      newErrors.description = 'Description must be at least 20 characters';
     }
-
+    
     if (!formData.author.trim()) {
       newErrors.author = 'Author name is required';
     }
-
+    
     if (!formData.project) {
       newErrors.project = 'Project selection is required';
     }
@@ -59,24 +56,37 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (!validateForm()) {
       return;
     }
 
     setIsSubmitting(true);
     try {
+      // Create knowledge entry with SOP type and file attachment
       const submitData = {
         ...formData,
-        attachments: attachments.map(att => ({
-          id: att.id,
-          filename: att.filename,
-          originalName: att.originalName,
-          mimetype: att.mimetype,
-          size: att.size
-        }))
+        content: formData.description, // Use description as content
+        attachments: uploadedFile ? [{
+          id: uploadedFile.id,
+          filename: uploadedFile.filename,
+          originalName: uploadedFile.originalName,
+          mimetype: uploadedFile.mimetype,
+          size: uploadedFile.size
+        }] : []
       };
-      await onSubmit(submitData);
+      
+      if (onSubmit) {
+        await onSubmit(submitData);
+      } else {
+        // Default submission to knowledge API
+        await knowledgeAPI.create(submitData);
+      }
+      
+      onClose();
+    } catch (error) {
+      console.error('Error uploading SOP:', error);
+      setErrors({ submit: 'Failed to upload SOP. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -88,7 +98,7 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
       ...prev,
       [name]: value
     }));
-
+    
     // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
@@ -98,11 +108,55 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
     }
   };
 
-  const handleTagKeyPress = (e) => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      addTag();
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type and size
+    const maxSize = 50 * 1024 * 1024; // 50MB for SOP documents
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'text/plain'
+    ];
+    
+    if (file.size > maxSize) {
+      setErrors({ file: 'File size must be less than 50MB' });
+      return;
     }
+    
+    if (!allowedTypes.includes(file.type)) {
+      setErrors({ file: 'Only PDF, Word documents, and text files are supported' });
+      return;
+    }
+
+    setUploading(true);
+    setErrors({ file: '' });
+    
+    try {
+      const response = await fileAPI.upload(file);
+      setUploadedFile(response.data);
+      
+      // Auto-fill title if empty
+      if (!formData.title.trim()) {
+        const fileName = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
+        setFormData(prev => ({
+          ...prev,
+          title: fileName
+        }));
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setErrors({ file: 'Failed to upload file. Please try again.' });
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeFile = () => {
+    setUploadedFile(null);
+    setErrors({ file: '' });
   };
 
   const addTag = () => {
@@ -123,48 +177,11 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
     }));
   };
 
-  const handleFileUpload = async (e) => {
-    const files = Array.from(e.target.files);
-    if (files.length === 0) return;
-
-    // Validate file size and type
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    const allowedTypes = ['image/', 'application/pdf', 'text/', 'application/vnd.openxmlformats-officedocument'];
-
-    const validFiles = files.filter(file => {
-      if (file.size > maxSize) {
-        alert(`File "${file.name}" is too large. Maximum size is 10MB.`);
-        return false;
-      }
-
-      const isValidType = allowedTypes.some(type => file.type.startsWith(type));
-      if (!isValidType) {
-        alert(`File "${file.name}" type is not supported.`);
-        return false;
-      }
-
-      return true;
-    });
-
-    if (validFiles.length === 0) return;
-
-    setUploading(true);
-    try {
-      const uploadPromises = validFiles.map(file => fileAPI.upload(file));
-      const uploadResults = await Promise.all(uploadPromises);
-
-      const newAttachments = uploadResults.map(result => result.data);
-      setAttachments(prev => [...prev, ...newAttachments]);
-    } catch (error) {
-      console.error('Error uploading files:', error);
-      alert('Failed to upload some files. Please try again.');
-    } finally {
-      setUploading(false);
+  const handleTagKeyPress = (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTag();
     }
-  };
-
-  const removeAttachment = (attachmentId) => {
-    setAttachments(prev => prev.filter(att => att.id !== attachmentId));
   };
 
   const formatFileSize = (bytes) => {
@@ -175,32 +192,20 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
-  const getTypeIcon = (type) => {
-    const typeConfig = knowledgeTypes.find(t => t.value === type);
-    return typeConfig ? typeConfig.icon : BookOpen;
-  };
-
-  const getTypeColor = (type) => {
-    const typeConfig = knowledgeTypes.find(t => t.value === type);
-    return typeConfig ? typeConfig.color : '#3b82f6';
-  };
-
-  const canProceedToStep2 = formData.title.trim() && formData.content.trim();
-  const selectedType = knowledgeTypes.find(t => t.value === formData.type);
-  const TypeIcon = selectedType?.icon || BookOpen;
+  const canProceedToStep2 = uploadedFile && formData.title.trim();
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content large knowledge-modal" onClick={(e) => e.stopPropagation()}>
+      <div className="modal-content large sop-modal" onClick={(e) => e.stopPropagation()}>
         {/* Enhanced Header */}
         <div className="modal-header">
           <div className="modal-title-section">
-            <div className="knowledge-icon" style={{ background: getTypeColor(formData.type) }}>
-              <TypeIcon size={24} />
+            <div className="sop-icon">
+              <BookOpen size={24} />
             </div>
             <div className="title-content">
-              <h2>Share Knowledge</h2>
-              <p>Contribute to your team's knowledge base and help others learn</p>
+              <h2>Upload SOP</h2>
+              <p>Share standard operating procedures with your team</p>
             </div>
           </div>
           <button className="close-btn" onClick={onClose}>
@@ -212,7 +217,7 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
         <div className="progress-steps">
           <div className={`step ${activeStep >= 1 ? 'active' : ''} ${activeStep > 1 ? 'completed' : ''}`}>
             <div className="step-number">1</div>
-            <div className="step-label">Content</div>
+            <div className="step-label">Upload</div>
           </div>
           <div className="step-line"></div>
           <div className={`step ${activeStep >= 2 ? 'active' : ''} ${activeStep > 2 ? 'completed' : ''}`}>
@@ -226,58 +231,81 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="knowledge-form">
+        <form onSubmit={handleSubmit} className="sop-form">
           <div className="form-content">
-            {/* Step 1: Content */}
+            {/* Step 1: Upload */}
             {activeStep === 1 && (
               <div className="step-content">
                 <div className="step-header">
-                  <BookOpen size={24} />
+                  <Upload size={24} />
                   <div>
-                    <h3>What knowledge would you like to share?</h3>
-                    <p>Start with a clear title and detailed content</p>
+                    <h3>Upload your SOP document</h3>
+                    <p>Select a PDF, Word document, or text file containing your standard operating procedure</p>
                   </div>
                 </div>
 
-                {/* Knowledge Type Selection */}
-                <div className="form-section">
-                  <label className="section-label">Knowledge Type</label>
-                  <div className="type-selector">
-                    {knowledgeTypes.map(type => {
-                      const Icon = type.icon;
-                      return (
-                        <label
-                          key={type.value}
-                          className={`type-option ${formData.type === type.value ? 'selected' : ''}`}
-                          style={{ '--type-color': type.color }}
-                        >
-                          <input
-                            type="radio"
-                            name="type"
-                            value={type.value}
-                            checked={formData.type === type.value}
-                            onChange={handleChange}
-                          />
-                          <div className="type-content">
-                            <div className="type-icon">
-                              <Icon size={20} />
-                            </div>
-                            <div className="type-info">
-                              <div className="type-name">{type.label}</div>
-                              <div className="type-desc">{type.desc}</div>
-                            </div>
+                {/* File Upload Area */}
+                <div className="upload-section">
+                  {!uploadedFile ? (
+                    <div className="upload-area">
+                      <input
+                        type="file"
+                        id="sop-upload"
+                        onChange={handleFileUpload}
+                        accept=".pdf,.doc,.docx,.txt"
+                        className="file-input"
+                        disabled={uploading}
+                      />
+                      <label htmlFor="sop-upload" className={`upload-label ${uploading ? 'uploading' : ''}`}>
+                        <Upload size={48} />
+                        <div className="upload-text">
+                          <div className="upload-title">
+                            {uploading ? 'Uploading document...' : 'Click to upload SOP document'}
                           </div>
-                        </label>
-                      );
-                    })}
-                  </div>
+                          <div className="upload-subtitle">
+                            PDF, Word documents, or text files (Max 50MB)
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="uploaded-file">
+                      <div className="file-preview">
+                        <div className="file-icon">
+                          <FileText size={32} />
+                        </div>
+                        <div className="file-info">
+                          <div className="file-name">{uploadedFile.originalName}</div>
+                          <div className="file-size">{formatFileSize(uploadedFile.size)}</div>
+                          <div className="file-status">
+                            <CheckCircle size={16} />
+                            <span>Successfully uploaded</span>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className="remove-file-btn"
+                          onClick={removeFile}
+                        >
+                          <Trash2 size={20} />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {errors.file && (
+                    <div className="error-message">
+                      <AlertCircle size={16} />
+                      {errors.file}
+                    </div>
+                  )}
                 </div>
 
-                {/* Title */}
+                {/* Basic Info */}
                 <div className="form-group">
                   <label htmlFor="title" className="form-label">
                     <FileText size={18} />
-                    Title *
+                    SOP Title *
                   </label>
                   <input
                     type="text"
@@ -285,7 +313,7 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
                     name="title"
                     value={formData.title}
                     onChange={handleChange}
-                    placeholder="Enter a clear, descriptive title..."
+                    placeholder="Enter a clear, descriptive title for this SOP..."
                     className={errors.title ? 'error' : ''}
                     maxLength={100}
                   />
@@ -298,29 +326,15 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
                   <div className="char-count">{formData.title.length}/100</div>
                 </div>
 
-                {/* Content */}
-                <div className="form-group">
-                  <label htmlFor="content" className="form-label">
-                    <BookOpen size={18} />
-                    Content *
-                  </label>
-                  <textarea
-                    id="content"
-                    name="content"
-                    value={formData.content}
-                    onChange={handleChange}
-                    placeholder="Share your knowledge in detail. Include examples, steps, or explanations that will help others understand and apply this information..."
-                    rows={8}
-                    className={errors.content ? 'error' : ''}
-                    maxLength={5000}
-                  />
-                  {errors.content && (
-                    <div className="error-message">
-                      <AlertCircle size={16} />
-                      {errors.content}
-                    </div>
-                  )}
-                  <div className="char-count">{formData.content.length}/5000</div>
+                {/* SOP Tips */}
+                <div className="tips-section">
+                  <h4>📋 SOP Best Practices:</h4>
+                  <ul className="tips-list">
+                    <li>Use clear, step-by-step instructions</li>
+                    <li>Include screenshots or diagrams when helpful</li>
+                    <li>Keep language simple and professional</li>
+                    <li>Review and update procedures regularly</li>
+                  </ul>
                 </div>
               </div>
             )}
@@ -332,8 +346,33 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
                   <Tag size={24} />
                   <div>
                     <h3>Add details and context</h3>
-                    <p>Help others discover and understand your knowledge</p>
+                    <p>Help others discover and understand your SOP</p>
                   </div>
+                </div>
+
+                {/* Description */}
+                <div className="form-group">
+                  <label htmlFor="description" className="form-label">
+                    <BookOpen size={18} />
+                    Description *
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    placeholder="Describe what this SOP covers, when to use it, and who should follow it..."
+                    rows={6}
+                    className={errors.description ? 'error' : ''}
+                    maxLength={1000}
+                  />
+                  {errors.description && (
+                    <div className="error-message">
+                      <AlertCircle size={16} />
+                      {errors.description}
+                    </div>
+                  )}
+                  <div className="char-count">{formData.description.length}/1000</div>
                 </div>
 
                 <div className="form-row">
@@ -398,9 +437,12 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
                     onChange={handleChange}
                   >
                     <option value="">Select a category (optional)</option>
-                    {categories.map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
+                    <option value="process">Process & Workflow</option>
+                    <option value="safety">Safety & Compliance</option>
+                    <option value="technical">Technical Procedures</option>
+                    <option value="administrative">Administrative</option>
+                    <option value="quality">Quality Assurance</option>
+                    <option value="training">Training & Onboarding</option>
                   </select>
                 </div>
 
@@ -416,16 +458,16 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
                       onKeyPress={handleTagKeyPress}
-                      placeholder="Add tags to help others find this knowledge..."
+                      placeholder="Add tags to help others find this SOP..."
                       disabled={formData.tags.length >= 10}
                     />
-                    <button
-                      type="button"
-                      className="add-tag-btn"
+                    <button 
+                      type="button" 
+                      className="add-tag-btn" 
                       onClick={addTag}
                       disabled={!tagInput.trim() || formData.tags.length >= 10}
                     >
-                      <Plus size={16} />
+                      <Tag size={16} />
                     </button>
                   </div>
                   {formData.tags.length > 0 && (
@@ -441,58 +483,6 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
                     </div>
                   )}
                 </div>
-
-                {/* File Attachments */}
-                <div className="form-group">
-                  <label className="form-label">
-                    <Upload size={18} />
-                    Attachments (Optional)
-                  </label>
-                  <div className="upload-area">
-                    <input
-                      type="file"
-                      id="file-upload"
-                      multiple
-                      onChange={handleFileUpload}
-                      className="file-input"
-                      disabled={uploading}
-                    />
-                    <label htmlFor="file-upload" className={`upload-label ${uploading ? 'uploading' : ''}`}>
-                      <Upload size={24} />
-                      <div className="upload-text">
-                        <div className="upload-title">
-                          {uploading ? 'Uploading files...' : 'Click to upload files'}
-                        </div>
-                        <div className="upload-subtitle">
-                          PDF, Images, Documents (Max 10MB each)
-                        </div>
-                      </div>
-                    </label>
-                  </div>
-
-                  {attachments.length > 0 && (
-                    <div className="attachments-list">
-                      {attachments.map(attachment => (
-                        <div key={attachment.id} className="attachment-item">
-                          <div className="attachment-icon">
-                            <FileText size={20} />
-                          </div>
-                          <div className="attachment-info">
-                            <div className="attachment-name">{attachment.originalName}</div>
-                            <div className="attachment-size">{formatFileSize(attachment.size)}</div>
-                          </div>
-                          <button
-                            type="button"
-                            className="remove-attachment"
-                            onClick={() => removeAttachment(attachment.id)}
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
               </div>
             )}
 
@@ -500,19 +490,20 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
             {activeStep === 3 && (
               <div className="step-content">
                 <div className="step-header">
-                  <Zap size={24} />
+                  <CheckCircle size={24} />
                   <div>
-                    <h3>Review your knowledge</h3>
-                    <p>Make sure everything looks good before sharing</p>
+                    <h3>Review your SOP</h3>
+                    <p>Make sure everything looks good before publishing</p>
                   </div>
                 </div>
 
                 <div className="review-content">
                   <div className="review-section">
-                    <h4>Knowledge Type</h4>
-                    <div className="review-type">
-                      <TypeIcon size={20} />
-                      <span>{selectedType?.label}</span>
+                    <h4>Document</h4>
+                    <div className="file-review">
+                      <FileText size={20} />
+                      <span>{uploadedFile?.originalName}</span>
+                      <span className="file-size">({formatFileSize(uploadedFile?.size || 0)})</span>
                     </div>
                   </div>
 
@@ -522,11 +513,11 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
                   </div>
 
                   <div className="review-section">
-                    <h4>Content Preview</h4>
-                    <div className="content-preview">
-                      {formData.content.length > 200
-                        ? `${formData.content.substring(0, 200)}...`
-                        : formData.content
+                    <h4>Description</h4>
+                    <div className="description-preview">
+                      {formData.description.length > 200 
+                        ? `${formData.description.substring(0, 200)}...` 
+                        : formData.description
                       }
                     </div>
                   </div>
@@ -561,19 +552,15 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
                     </div>
                   )}
 
-                  {attachments.length > 0 && (
-                    <div className="review-section">
-                      <h4>Attachments ({attachments.length})</h4>
-                      <div className="attachments-preview">
-                        {attachments.map(attachment => (
-                          <div key={attachment.id} className="attachment-preview">
-                            <FileText size={16} />
-                            <span>{attachment.originalName}</span>
-                          </div>
-                        ))}
-                      </div>
+                  <div className="submission-note">
+                    <div className="note-icon">
+                      <BookOpen size={20} />
                     </div>
-                  )}
+                    <div className="note-content">
+                      <h4>What happens next?</h4>
+                      <p>Your SOP will be published to the Knowledge Base where team members can access, download, and reference it for their work processes.</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -583,8 +570,8 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
           <div className="modal-actions">
             <div className="action-left">
               {activeStep > 1 && (
-                <button
-                  type="button"
+                <button 
+                  type="button" 
                   className="btn-outline"
                   onClick={() => setActiveStep(prev => prev - 1)}
                 >
@@ -612,12 +599,12 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
                   {isSubmitting ? (
                     <>
                       <div className="spinner"></div>
-                      Sharing...
+                      Publishing...
                     </>
                   ) : (
                     <>
                       <BookOpen size={16} />
-                      Share Knowledge
+                      Publish SOP
                     </>
                   )}
                 </button>
@@ -630,4 +617,4 @@ const CreateKnowledgeModal = ({ onClose, onSubmit, categories = [], projects = [
   );
 };
 
-export default CreateKnowledgeModal; 
+export default UploadSOPModal; 

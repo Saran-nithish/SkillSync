@@ -1,193 +1,406 @@
 # SkillSync - Knowledge Sharing Platform
 
-![SkillSync Logo](https://img.shields.io/badge/SkillSync-Knowledge%20Sharing-blue?style=for-the-badge)
-![Version](https://img.shields.io/badge/version-1.0.0-green?style=flat-square)
-![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)
-![Node.js](https://img.shields.io/badge/node.js-v14+-green?style=flat-square)
-![React](https://img.shields.io/badge/react-v18+-blue?style=flat-square)
+<div align="center">
 
-SkillSync is a modern, AI-powered knowledge-sharing platform designed to help teams collaborate effectively, share SOPs, best practices, and experiences while reducing the need for Knowledge Transfer (KT) sessions.
+![SkillSync Logo](https://img.shields.io/badge/SkillSync-Knowledge%20Sharing-blue?style=for-the-badge)
+
+A comprehensive team knowledge sharing and collaboration platform with AI-powered features, modern UI/UX, and intelligent search capabilities.
+
+[![React](https://img.shields.io/badge/React-18.2.0-blue?style=flat-square&logo=react)](https://reactjs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-16.0%2B-green?style=flat-square&logo=node.js)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4.18.2-lightgrey?style=flat-square&logo=express)](https://expressjs.com/)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
+
+</div>
 
 ## 🚀 Features
 
-### Core Functionality
-- **Knowledge Sharing**: Share SOPs, best practices, and experiences with categorization and tagging
-- **Query-Based Support**: Ask questions and get answers from team members
-- **Smart Search**: NLP-powered search functionality for finding relevant knowledge
-- **Community Collaboration**: Project-based communities for team collaboration
-- **Responsive Design**: Modern, mobile-friendly interface
+### 📚 Knowledge Management
+- **Smart Knowledge Base**: Create, organize, and share articles, SOPs, and best practices
+- **Multi-step Knowledge Creation**: Guided wizard for creating comprehensive knowledge articles
+- **File Upload Support**: Upload SOPs, documents, images, and videos (up to 50MB)
+- **Advanced Tagging**: Organize content with intelligent tagging system
+- **Category Management**: Structured categorization for easy discovery
 
-### Key Benefits
-- ✅ **Reduce KT Sessions**: AI model reduces need for Knowledge Transfer sessions
-- ✅ **Increase Efficiency**: Employees can quickly find solutions
-- ✅ **Improve Knowledge Sharing**: Centralized knowledge base and Q&A system
+### 🤖 AI-Powered Features
+- **Ask AI**: Intelligent Q&A system powered by OpenAI GPT
+- **Smart Search**: NLP-powered search with relevance scoring and highlighting
+- **Template Suggestions**: AI-generated quick-start templates for common queries
+- **Content Recommendations**: Intelligent content discovery based on user behavior
 
-## 🛠 Tech Stack
+### 💬 Q&A Support
+- **Community Q&A**: Ask questions and get answers from team members
+- **AI-Assisted Answers**: Get AI-generated responses when human answers aren't available
+- **Question Templates**: Pre-built templates for different types of questions
+- **Answer Validation**: Community-driven answer quality assurance
+
+### 👥 Community Features
+- **Team Communities**: Create and join project-based communities
+- **Member Management**: Add/remove members with role-based permissions
+- **Activity Feeds**: Track community engagement and contributions
+- **Discussion Threads**: Threaded conversations within communities
+
+### 🎨 Modern UI/UX
+- **Apple-Inspired Design**: Clean, minimalist interface with modern aesthetics
+- **Dark/Light Mode**: Automatic theme switching with user preferences
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
+- **Accessibility**: WCAG 2.1 compliant with keyboard navigation support
+
+### 🔐 Authentication & Security
+- **Secure Authentication**: JWT-based authentication with bcrypt password hashing
+- **Role-Based Access**: User roles and permissions management
+- **Guest Access**: Public content viewing for non-authenticated users
+- **Session Management**: Secure session handling with automatic logout
+
+### 📊 Analytics & Insights
+- **Usage Analytics**: Track knowledge sharing metrics and user engagement
+- **Search Analytics**: Monitor popular searches and content discovery patterns
+- **Performance Metrics**: Real-time system performance monitoring
+- **User Activity**: Individual and team contribution tracking
+
+## 🛠️ Technology Stack
 
 ### Frontend
-- **React 18** - Modern React with hooks
-- **React Router** - Client-side routing
-- **Axios** - HTTP requests
-- **Lucide React** - Modern icon library
-- **CSS3** - Custom styling with responsive design
+- **React 18.2.0**: Modern React with hooks and functional components
+- **React Router DOM**: Client-side routing and navigation
+- **Lucide React**: Beautiful, customizable icon library
+- **CSS Variables**: Dynamic theming and responsive design
+- **Axios**: HTTP client for API communication
 
 ### Backend
-- **Node.js** - Runtime environment
-- **Express.js** - Web framework
-- **Natural** - NLP library for intelligent search
-- **UUID** - Unique identifier generation
-- **CORS** - Cross-origin resource sharing
+- **Node.js 16+**: JavaScript runtime environment
+- **Express.js 4.18.2**: Web application framework
+- **Natural NLP**: Natural language processing for search
+- **Multer**: File upload handling
+- **OpenAI API**: AI-powered features integration
+- **UUID**: Unique identifier generation
 
-### AI/NLP Features
-- **Text Processing**: Tokenization and stemming
-- **Relevance Scoring**: Content matching with semantic understanding
-- **Smart Search**: Context-aware search results
+### Development Tools
+- **Concurrently**: Run multiple npm scripts simultaneously
+- **Nodemon**: Automatic server restart during development
+- **ESLint**: Code quality and consistency
+- **Prettier**: Code formatting
 
-## 📦 Installation & Setup
+## 📋 Prerequisites
 
-### Prerequisites
-- Node.js (v14 or higher)
-- npm or yarn package manager
+Before you begin, ensure you have the following installed:
 
+- **Node.js**: Version 16.0.0 or higher
+- **npm**: Version 8.0.0 or higher
+- **Git**: For version control
+- **OpenAI API Key**: (Optional) For AI features
+
+## 🚀 Quick Start
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/your-username/skillsync.git
+cd skillsync
+```
 
 ### 2. Install Dependencies
+
 ```bash
 # Install all dependencies (frontend + backend)
-npm run install-all
-```
-### 3. Environment Setup
-```bash
-# Copy environment files
-cp .env.example .env
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
+npm run setup
 
-# Edit the .env files with your configuration
+# Or install separately
+npm run install-backend
+npm run install-frontend
 ```
-### 4. Start the Application
+
+### 3. Environment Configuration
+
+#### Backend Configuration
 ```bash
-# Start both frontend and backend concurrently
+cd backend
+cp env.example .env
+```
+
+Edit the `.env` file with your configuration:
+```env
+PORT=5000
+NODE_ENV=development
+CORS_ORIGIN=http://localhost:3000
+OPENAI_API_KEY=your_openai_api_key_here
+JWT_SECRET=your_super_secret_jwt_key_change_in_production
+```
+
+#### Frontend Configuration
+```bash
+cd frontend
+cp env.example .env
+```
+
+Edit the `.env` file:
+```env
+REACT_APP_API_URL=http://localhost:5000/api
+REACT_APP_APP_NAME=SkillSync
+REACT_APP_ENABLE_AI_FEATURES=true
+```
+
+### 4. Start Development
+
+```bash
+# Start both frontend and backend
 npm run dev
+
+# Or start separately
+npm run dev-backend    # Backend on http://localhost:5000
+npm run dev-frontend   # Frontend on http://localhost:3000
 ```
 
-**Or run separately:**
-```bash
-# Terminal 1 - Backend (Port 5000)
-npm run server
+### 5. Access the Application
 
-# Terminal 2 - Frontend (Port 3000)
-npm run client
-```
+- **Frontend**: http://localhost:3000
+- **Backend API**: http://localhost:5000/api
+- **Demo Login**: Use `admin` / `admin` for testing
 
 ## 📁 Project Structure
 
 ```
 skillsync/
-├── frontend/                 # React frontend application
-│   ├── public/              # Static assets
-│   ├── src/
-│   │   ├── components/      # Reusable React components
-│   │   ├── pages/          # Page components
-│   │   ├── services/       # API services
-│   │   └── App.js          # Main app component
-│   └── package.json
-├── backend/                 # Node.js backend API
-│   ├── server.js           # Express server with API routes
-│   └── package.json
-├── package.json            # Root package.json
-└── README.md
+├── backend/                    # Backend API server
+│   ├── server.js              # Main server file
+│   ├── package.json           # Backend dependencies
+│   ├── env.example            # Environment variables template
+│   └── uploads/               # File upload directory
+├── frontend/                   # React frontend application
+│   ├── public/                # Static assets
+│   ├── src/                   # Source code
+│   │   ├── components/        # Reusable React components
+│   │   ├── pages/            # Page components
+│   │   ├── contexts/         # React contexts (Auth, Theme, etc.)
+│   │   ├── hooks/            # Custom React hooks
+│   │   ├── services/         # API services
+│   │   └── App.js            # Main App component
+│   ├── package.json          # Frontend dependencies
+│   └── env.example           # Environment variables template
+├── package.json              # Root package.json with scripts
+└── README.md                 # This file
 ```
 
-## 🎯 Key Components
+## 🔧 Configuration
 
-### Frontend Components
-- **Dashboard**: Overview with stats and recent activity
-- **Knowledge Base**: Browse, search, and create knowledge items
-- **Q&A Support**: Ask questions and provide answers
-- **Community**: Project-based collaboration spaces
-- **Modals**: Create knowledge, ask questions, answer queries
+### Backend Configuration
 
-### Backend Features
-- **RESTful API**: Complete CRUD operations
-- **NLP Search**: Intelligent content matching
-- **Mock Database**: In-memory data storage
-- **CORS Support**: Cross-origin requests handled
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `PORT` | Server port | `5000` | No |
+| `NODE_ENV` | Environment | `development` | No |
+| `CORS_ORIGIN` | Frontend URL | `http://localhost:3000` | No |
+| `OPENAI_API_KEY` | OpenAI API key | - | No |
+| `JWT_SECRET` | JWT signing key | - | Yes (Production) |
 
-## 🔧 API Endpoints
+### Frontend Configuration
 
-### Knowledge Management
-- `GET /api/knowledge` - Get all knowledge items
-- `POST /api/knowledge` - Create new knowledge
-- `POST /api/knowledge/:id/like` - Like knowledge item
+| Variable | Description | Default | Required |
+|----------|-------------|---------|----------|
+| `REACT_APP_API_URL` | Backend API URL | `http://localhost:5000/api` | Yes |
+| `REACT_APP_APP_NAME` | Application name | `SkillSync` | No |
+| `REACT_APP_ENABLE_AI_FEATURES` | Enable AI features | `true` | No |
 
-### Q&A System
-- `GET /api/queries` - Get all queries
-- `POST /api/queries` - Create new query
-- `POST /api/queries/:id/answer` - Answer a query
+## 🚀 Deployment
 
-### Community Features
-- `GET /api/communities` - Get all communities
-- `GET /api/communities/:project` - Get community by project
+### Production Build
 
-### Utility Endpoints
-- `GET /api/categories` - Get all categories
-- `GET /api/projects` - Get all projects
+```bash
+# Build the frontend for production
+npm run build
 
-## 🎨 User Interface
+# The build files will be in frontend/build/
+```
 
-### Design Principles
-- **Clean & Modern**: Minimalist design with clear typography
-- **Responsive**: Works seamlessly on desktop, tablet, and mobile
-- **Intuitive**: Easy navigation with clear visual hierarchy
-- **Accessible**: High contrast colors and proper ARIA labels
+### Docker Deployment (Optional)
 
-### Key UI Features
-- **Interactive Cards**: Hover effects and smooth transitions
-- **Smart Filtering**: Real-time search and category filtering
-- **Modal Forms**: User-friendly forms for content creation
-- **Visual Feedback**: Loading states, success messages, and error handling
+Create a `Dockerfile` in the root directory:
 
-## 🤖 AI/NLP Features
+```dockerfile
+# Multi-stage build
+FROM node:18-alpine AS frontend-build
+WORKDIR /app/frontend
+COPY frontend/package*.json ./
+RUN npm ci --only=production
+COPY frontend/ ./
+RUN npm run build
 
-### Smart Search
-- **Tokenization**: Break down search queries into meaningful terms
-- **Stemming**: Reduce words to their root forms for better matching
-- **Relevance Scoring**: Calculate content relevance based on term matching
-- **Context Awareness**: Understand search intent beyond exact matches
+FROM node:18-alpine AS backend
+WORKDIR /app
+COPY backend/package*.json ./
+RUN npm ci --only=production
+COPY backend/ ./
+COPY --from=frontend-build /app/frontend/build ./public
 
-### Content Processing
-- **Tag Analysis**: Process and match content tags
-- **Title Matching**: Prioritize title relevance in search results
-- **Content Scanning**: Full-text search across knowledge items
+EXPOSE 5000
+CMD ["npm", "start"]
+```
 
-## 🚀 Getting Started
+### Environment Variables for Production
 
-1. **Explore the Dashboard**: Start with an overview of your knowledge base
-2. **Browse Knowledge**: Discover existing SOPs, best practices, and experiences
-3. **Search Smart**: Use the intelligent search to find specific information
-4. **Ask Questions**: Get help from team members through the Q&A system
-5. **Join Communities**: Collaborate with project-specific teams
-6. **Share Knowledge**: Contribute your own expertise to help others
+```bash
+# Backend (.env)
+NODE_ENV=production
+PORT=5000
+CORS_ORIGIN=https://your-domain.com
+OPENAI_API_KEY=your_production_openai_key
+JWT_SECRET=your_super_secure_production_jwt_secret
 
-## 📝 Usage Examples
+# Frontend (.env)
+REACT_APP_API_URL=https://your-api-domain.com/api
+REACT_APP_APP_NAME=SkillSync
+REACT_APP_ENABLE_AI_FEATURES=true
+```
 
-### Creating Knowledge
-1. Click "Share Knowledge" button
-2. Fill in title, content, category, and project
-3. Add relevant tags for better discoverability
-4. Submit to share with your team
+## 🧪 Testing
 
-### Asking Questions
-1. Navigate to Q&A Support
-2. Click "Ask Question"
-3. Select relevant project and describe your question
-4. Team members can provide answers
+### Run Tests
 
-### Finding Information
-1. Use the search bar in the header
-2. Apply filters by category, project, or type
-3. Switch between grid and list views
-4. Like helpful content to increase its visibility
+```bash
+# Frontend tests
+cd frontend
+npm test
 
+# Backend tests (when available)
+cd backend
+npm test
+```
 
-**Built with ❤️ for better knowledge sharing and team collaboration**
+### Manual Testing
+
+1. **Authentication**: Test login/signup with demo credentials
+2. **Knowledge Management**: Create, edit, and search knowledge articles
+3. **Q&A System**: Ask questions and provide answers
+4. **AI Features**: Test AI-powered search and question answering
+5. **File Upload**: Upload various file types and sizes
+6. **Responsive Design**: Test on different screen sizes
+
+## 📊 API Documentation
+
+### Authentication Endpoints
+
+```http
+POST /api/auth/login
+POST /api/auth/register
+POST /api/auth/logout
+GET  /api/auth/me
+GET  /api/auth/verify
+```
+
+### Knowledge Base Endpoints
+
+```http
+GET    /api/knowledge
+POST   /api/knowledge
+PUT    /api/knowledge/:id
+DELETE /api/knowledge/:id
+POST   /api/knowledge/:id/like
+```
+
+### Q&A Endpoints
+
+```http
+GET    /api/queries
+POST   /api/queries
+POST   /api/queries/:id/answer
+POST   /api/queries/:id/ai-answer
+```
+
+### Search Endpoints
+
+```http
+GET    /api/search?q=query&type=all|knowledge|queries
+```
+
+### File Upload Endpoints
+
+```http
+POST   /api/upload
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+
+- Follow the existing code style and conventions
+- Write meaningful commit messages
+- Add comments for complex logic
+- Test your changes thoroughly
+- Update documentation as needed
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### Port Already in Use
+```bash
+# Kill process using port 5000
+npx kill-port 5000
+
+# Or use different port
+PORT=5001 npm run dev-backend
+```
+
+#### CORS Issues
+- Ensure `CORS_ORIGIN` in backend `.env` matches frontend URL
+- Check that both servers are running on correct ports
+
+#### File Upload Issues
+- Check file size limits (default: 50MB)
+- Ensure `uploads/` directory exists and is writable
+- Verify file types are allowed in server configuration
+
+#### AI Features Not Working
+- Verify `OPENAI_API_KEY` is set correctly
+- Check OpenAI API quota and billing
+- Ensure `NODE_TLS_REJECT_UNAUTHORIZED=0` for corporate networks
+
+### Debugging
+
+Enable debug logging:
+```bash
+# Backend
+DEBUG=* npm run dev-backend
+
+# Check browser console for frontend errors
+# Check server logs for backend errors
+```
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👥 Team
+
+- **Development Team**: SkillSync Contributors
+- **Project Lead**: [Your Name]
+- **UI/UX Design**: Modern Apple-inspired design principles
+- **Backend Architecture**: RESTful API with NLP integration
+
+## 🙏 Acknowledgments
+
+- [React](https://reactjs.org/) - Frontend framework
+- [Express.js](https://expressjs.com/) - Backend framework
+- [OpenAI](https://openai.com/) - AI capabilities
+- [Lucide](https://lucide.dev/) - Icon library
+- [Natural](https://github.com/NaturalNode/natural) - NLP processing
+
+## 📞 Support
+
+For support, email support@skillsync.com or create an issue on GitHub.
+
+---
+
+<div align="center">
+
+**Made with ❤️ by the SkillSync Team**
+
+[Website](https://skillsync.com) • [Documentation](https://docs.skillsync.com) • [Support](mailto:support@skillsync.com)
+
+</div>
