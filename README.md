@@ -9,20 +9,18 @@ A comprehensive team knowledge sharing and collaboration platform with AI-powere
 [![React](https://img.shields.io/badge/React-18.2.0-blue?style=flat-square&logo=react)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-16.0%2B-green?style=flat-square&logo=node.js)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-4.18.2-lightgrey?style=flat-square&logo=express)](https://expressjs.com/)
-[![License](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
 </div>
 
 ## 🚀 Features
 
-<<<<<<< HEAD
 ### 📚 Knowledge Management
 - **Smart Knowledge Base**: Create, organize, and share articles, SOPs, and best practices
 - **Multi-step Knowledge Creation**: Guided wizard for creating comprehensive knowledge articles
 - **File Upload Support**: Upload SOPs, documents, images, and videos (up to 50MB)
 - **Advanced Tagging**: Organize content with intelligent tagging system
 - **Category Management**: Structured categorization for easy discovery
-=======
+
 ### Core Functionality
 - **Knowledge Sharing**: Share SOPs, best practices, and experiences with categorization and tagging
 - **Query-Based Support**: Ask questions and get answers from team members
@@ -30,7 +28,6 @@ A comprehensive team knowledge sharing and collaboration platform with AI-powere
 - **Smart Search**: NLP-powered search functionality for finding relevant knowledge
 - **Community Collaboration**: Project-based communities for team collaboration
 - **Responsive Design**: Modern, mobile-friendly interface
->>>>>>> 0c1d71ab8bda599033b991c2e4bb73f17ab9ae3a
 
 ### 🤖 AI-Powered Features
 - **Ask AI**: Intelligent Q&A system powered by OpenAI GPT
@@ -211,80 +208,6 @@ skillsync/
 | `REACT_APP_APP_NAME` | Application name | `SkillSync` | No |
 | `REACT_APP_ENABLE_AI_FEATURES` | Enable AI features | `true` | No |
 
-## 🚀 Deployment
-
-### Production Build
-
-```bash
-# Build the frontend for production
-npm run build
-
-# The build files will be in frontend/build/
-```
-
-### Docker Deployment (Optional)
-
-Create a `Dockerfile` in the root directory:
-
-```dockerfile
-# Multi-stage build
-FROM node:18-alpine AS frontend-build
-WORKDIR /app/frontend
-COPY frontend/package*.json ./
-RUN npm ci --only=production
-COPY frontend/ ./
-RUN npm run build
-
-FROM node:18-alpine AS backend
-WORKDIR /app
-COPY backend/package*.json ./
-RUN npm ci --only=production
-COPY backend/ ./
-COPY --from=frontend-build /app/frontend/build ./public
-
-EXPOSE 5000
-CMD ["npm", "start"]
-```
-
-### Environment Variables for Production
-
-```bash
-# Backend (.env)
-NODE_ENV=production
-PORT=5000
-CORS_ORIGIN=https://your-domain.com
-OPENAI_API_KEY=your_production_openai_key
-JWT_SECRET=your_super_secure_production_jwt_secret
-
-# Frontend (.env)
-REACT_APP_API_URL=https://your-api-domain.com/api
-REACT_APP_APP_NAME=SkillSync
-REACT_APP_ENABLE_AI_FEATURES=true
-```
-
-## 🧪 Testing
-
-### Run Tests
-
-```bash
-# Frontend tests
-cd frontend
-npm test
-
-# Backend tests (when available)
-cd backend
-npm test
-```
-
-### Manual Testing
-
-1. **Authentication**: Test login/signup with demo credentials
-2. **Knowledge Management**: Create, edit, and search knowledge articles
-3. **Q&A System**: Ask questions and provide answers
-4. **AI Features**: Test AI-powered search and question answering
-5. **File Upload**: Upload various file types and sizes
-6. **Responsive Design**: Test on different screen sizes
-
 ## 📊 API Documentation
 
 ### Authentication Endpoints
@@ -381,11 +304,6 @@ DEBUG=* npm run dev-backend
 # Check browser console for frontend errors
 # Check server logs for backend errors
 ```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 👥 Team
 
 - **Development Team**: SkillSync Contributors
